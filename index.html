@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Smart Flashcards - เกมท่องจำคำศัพท์ระบบจัดกล่องทบทวนอัจฉริยะ (SRS)</title>
+  <meta name="description" content="เกมแฟลชการ์ดคำศัพท์ภาษาอังกฤษที่ทบทวนความรู้ด้วยระบบ Spaced Repetition (SRS) มีโหมดหมวดหมู่ ตัวอย่างประโยค และการออกเสียง เพื่อให้การเรียนรู้มีประสิทธิภาพสูงสุด">
+  
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Sidebar Navigation -->
+  <aside>
+    <div class="logo-container">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24">
+          <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+        </svg>
+      </div>
+      <span class="logo-text">SmartCards</span>
+    </div>
+
+    <nav>
+      <div class="nav-item active" data-view="dashboard" id="nav-dashboard">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+        <span>หน้าแรก / เริ่มเล่น</span>
+      </div>
+      <div class="nav-item" data-view="study" id="nav-study">
+        <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        <span>การ์ดคำศัพท์ / เล่นเกม</span>
+      </div>
+      <div class="nav-item" data-view="manager" id="nav-manager">
+        <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+        <span>คลังคำศัพท์</span>
+      </div>
+      <div class="nav-item" data-view="analytics" id="nav-analytics">
+        <svg viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+        <span>สถิติและความคืบหน้า</span>
+      </div>
+      <div class="nav-item" data-view="settings" id="nav-settings">
+        <svg viewBox="0 0 24 24"><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/><circle cx="12" cy="12" r="3"/></svg>
+        <span>ตั้งค่าระบบ</span>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-streak-widget">
+        <span class="streak-fire" id="sidebar-streak-fire">🔥</span>
+        <div class="streak-info">
+          <span class="streak-count" id="sidebar-streak-count">0</span>
+          <span class="streak-label">วันเรียนต่อเนื่อง</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Mobile Navigation Bar -->
+  <div class="mobile-nav-bar">
+    <div class="mobile-nav-item active" data-view="dashboard">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+      <span>หน้าแรก</span>
+    </div>
+    <div class="mobile-nav-item" data-view="study">
+      <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      <span>เริ่มเล่น</span>
+    </div>
+    <div class="mobile-nav-item" data-view="manager">
+      <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      <span>คลังศัพท์</span>
+    </div>
+    <div class="mobile-nav-item" data-view="analytics">
+      <svg viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+      <span>สถิติ</span>
+    </div>
+    <div class="mobile-nav-item" data-view="settings">
+      <svg viewBox="0 0 24 24"><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/><circle cx="12" cy="12" r="3"/></svg>
+      <span>ตั้งค่า</span>
+    </div>
+  </div>
+
+  <!-- Main Content Area -->
+  <main>
+    <!-- Top Header Stats Bar -->
+    <div class="dashboard-header">
+      <div class="dashboard-title">
+        <h1 id="header-main-title">สวัสดีคนเก่งภาษาอังกฤษ!</h1>
+        <p id="header-subtitle">ฝึกฝนวันละนิด ช่วยให้จดจำคำศัพท์ได้อย่างยั่งยืน</p>
+      </div>
+
+      <div class="stats-bar">
+        <div class="stat-chip" id="stat-score-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--text-highlight)" stroke-width="2">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+          </svg>
+          <div>
+            <div class="stat-val" id="global-stat-score">0</div>
+            <div class="stat-lbl">คะแนนรวม</div>
+          </div>
+        </div>
+        <div class="stat-chip" id="stat-streak-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--danger)" stroke-width="2">
+            <path d="M12 2c0 0-4 4.5-4 7.5s2 4.5 4 4.5 4-1.5 4-4.5S12 2 12 2z"/>
+          </svg>
+          <div>
+            <div class="stat-val" id="global-stat-streak">0</div>
+            <div class="stat-lbl">การตอบถูกต่อเนื่อง</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== DASHBOARD VIEW ==================== -->
+    <section class="view-section active" id="dashboard-view">
+      <!-- Main Dashboard Menu -->
+      <div id="main-dashboard-menu">
+        <div class="mode-grid">
+          <!-- SRS Mode Card -->
+          <div class="mode-card srs-mode" id="start-srs-btn">
+            <div class="mode-icon">🧠</div>
+            <div class="mode-details">
+              <h3>ทบทวนอัจฉริยะ (SRS)</h3>
+              <p>ระบบสุ่มทบทวนคำศัพท์เก่าปนใหม่ โดยวิเคราะห์ความแม่นยำของคุณ คำศัพท์ยากจะปรากฏบ่อยขึ้น ส่วนคำที่จำได้แล้วจะห่างออกไป</p>
+            </div>
+            <div class="mode-footer">
+              <span class="mode-count" id="dash-due-words-info"><span id="dash-due-words">0</span> คำที่ต้องทบทวนในตอนนี้</span>
+              <button class="btn-start" id="btn-start-srs">เริ่มทบทวน</button>
+            </div>
+          </div>
+
+          <!-- Category Selection Card -->
+          <div class="mode-card category-mode" id="start-category-btn">
+            <div class="mode-icon">📁</div>
+            <div class="mode-details">
+              <h3>เลือกทวนตามหมวดหมู่</h3>
+              <p>ฝึกฝนและท่องจำคำศัพท์แยกตามกลุ่ม เช่น สัตว์ สิ่งของ เครื่องใช้ในบ้าน อาหาร และคำศัพท์ทั่วไป เพื่อเน้นเรียนเฉพาะเรื่อง</p>
+            </div>
+            <div class="mode-footer">
+              <span class="mode-count" id="dash-total-words-info">มีทั้งหมด <span id="dash-total-words">0</span> คำศัพท์</span>
+              <button class="btn-start" id="btn-start-cat">เลือกหมวดหมู่</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- SRS Stats Dashboard Widget -->
+        <div class="analytics-grid-row">
+          <div class="srs-box-tracker-container">
+            <h3>สถานะกล่องความจำ (Leitner Boxes)</h3>
+            <div class="srs-boxes-list">
+              <div class="srs-box-row">
+                <div class="srs-box-title">
+                  <div class="srs-box-dot box-1-dot"></div>
+                  <span>กล่องที่ 1 (กำลังเรียนรู้)</span>
+                </div>
+                <div class="srs-box-stats">
+                  <span class="srs-box-count" id="dash-box-1-count">0</span>
+                  <span class="srs-box-interval">ทบทวนทันที</span>
+                </div>
+              </div>
+              <div class="srs-box-row">
+                <div class="srs-box-title">
+                  <div class="srs-box-dot box-2-dot"></div>
+                  <span>กล่องที่ 2 (พอจำได้บ้าง)</span>
+                </div>
+                <div class="srs-box-stats">
+                  <span class="srs-box-count" id="dash-box-2-count">0</span>
+                  <span class="srs-box-interval">ทวนทุก 30 วิ</span>
+                </div>
+              </div>
+              <div class="srs-box-row">
+                <div class="srs-box-title">
+                  <div class="srs-box-dot box-3-dot"></div>
+                  <span>กล่องที่ 3 (จำระดับปานกลาง)</span>
+                </div>
+                <div class="srs-box-stats">
+                  <span class="srs-box-count" id="dash-box-3-count">0</span>
+                  <span class="srs-box-interval">ทวนทุก 2 นาที</span>
+                </div>
+              </div>
+              <div class="srs-box-row">
+                <div class="srs-box-title">
+                  <div class="srs-box-dot box-4-dot"></div>
+                  <span>กล่องที่ 4 (จำได้ดี)</span>
+                </div>
+                <div class="srs-box-stats">
+                  <span class="srs-box-count" id="dash-box-4-count">0</span>
+                  <span class="srs-box-interval">ทวนทุก 10 นาที</span>
+                </div>
+              </div>
+              <div class="srs-box-row">
+                <div class="srs-box-title">
+                  <div class="srs-box-dot box-5-dot"></div>
+                  <span>กล่องที่ 5 (เชี่ยวชาญ)</span>
+                </div>
+                <div class="srs-box-stats">
+                  <span class="srs-box-count" id="dash-box-5-count">0</span>
+                  <span class="srs-box-interval">ทวนทุก 30 นาที</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Category Selection Subpanel -->
+      <div id="category-selection-container" class="category-selection-container">
+        <div class="back-btn-container">
+          <button class="btn-back-link" id="back-to-menu-btn">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            ย้อนกลับไปหน้าแรก
+          </button>
+        </div>
+        <div class="cat-grid" id="categories-grid-list">
+          <!-- Rendered dynamically in app.js -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== STUDY VIEW ==================== -->
+    <section class="view-section" id="study-view">
+      <div class="gameplay-wrapper">
+        <div class="gameplay-header">
+          <div class="deck-info">
+            <span class="deck-name" id="study-deck-name">ระบบทบทวนอัจฉริยะ (SRS)</span>
+            <span class="deck-progress-text" id="study-deck-progress-text">คำที่ 0 จากทั้งหมด 0 คำ</span>
+          </div>
+          <div class="heart-lives" id="study-lives-hearts">
+            <!-- Dynamic Hearts -->
+          </div>
+        </div>
+
+        <div class="progress-track-bar">
+          <div class="progress-track-fill" id="study-progress-fill"></div>
+        </div>
+
+        <!-- The Flip Card Area -->
+        <div class="card-perspective" id="study-card-perspective">
+          <div class="flashcard" id="flashcard-element">
+            <!-- Front Face -->
+            <div class="card-face card-front">
+              <div class="card-header-widgets">
+                <span class="card-badge" id="card-word-category">Animals</span>
+                <button class="tts-btn" title="ออกเสียงภาษาอังกฤษ" id="tts-speak-front-btn">
+                  <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+                </button>
+              </div>
+              <h2 class="card-en-word" id="card-word-title">chameleon</h2>
+              <span class="card-ipa" id="card-word-ipa">/kəˈmiː.li.ən/</span>
+              
+              <div class="sentence-hint-container">
+                <div class="sentence-hint-en" id="card-sentence-hint">
+                  The <span class="blank-space">chameleon</span> changed its color to blend in.
+                </div>
+                <div class="sentence-hint-th" id="card-sentence-translation">
+                  กิ้งก่าเปลี่ยนสีผิวของมันเพื่อให้กลมกลืน
+                </div>
+                <button class="reveal-hint-trigger" id="reveal-hint-btn">แสดงคำแปลประโยคตัวอย่าง</button>
+              </div>
+            </div>
+
+            <!-- Back Face -->
+            <div class="card-face card-back">
+              <div class="card-header-widgets">
+                <span class="card-badge">ความหมายภาษาไทย</span>
+                <button class="tts-btn" title="ออกเสียงภาษาอังกฤษ" id="tts-speak-back-btn">
+                  <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+                </button>
+              </div>
+              <h3 class="card-th-meaning" id="card-word-meaning-back">กิ้งก่าเปลี่ยนสี</h3>
+              <div class="card-ipa" id="card-word-ipa-back">/kəˈmiː.li.ən/</div>
+              
+              <div class="card-details-box">
+                <div class="card-detail-item">
+                  <span class="detail-label">คำอ่านและสะกด</span>
+                  <span class="detail-content" id="card-word-title-back" style="font-weight:700; font-size:18px;">chameleon</span>
+                </div>
+                <div class="card-detail-item">
+                  <span class="detail-label">ตัวอย่างประโยคบริบท</span>
+                  <span class="detail-content" id="card-back-sentence-en" style="font-style: italic;">The chameleon changed its color.</span>
+                  <span class="detail-content" id="card-back-sentence-th" style="color: var(--text-muted); font-size: 13px;">กิ้งก่าเปลี่ยนสีผิวของมัน...</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2 choices input selection -->
+        <div class="choices-panel" id="study-choices-panel">
+          <!-- Dynamic choice buttons generated in app.js -->
+        </div>
+
+        <!-- Next button actions -->
+        <div class="feedback-overlay-container" id="study-feedback-overlay">
+          <button class="btn-action-next" id="btn-next-card">
+            <span>คำถัดไป</span>
+            <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== VOCABULARY MANAGER VIEW ==================== -->
+    <section class="view-section" id="manager-view">
+      <div class="dashboard-title" style="margin-bottom: 24px;">
+        <h2>คลังคำศัพท์ทั้งหมด</h2>
+        <p>คุณสามารถเพิ่ม แก้ไข ลบคำศัพท์ทีละคำ หรืออัปโหลดนำเข้าข้อมูลเป็นกลุ่ม (3000+ คำ) จาก Excel หรือไฟล์ CSV ได้อย่างสะดวกรวดเร็ว</p>
+      </div>
+
+      <!-- Controls & Search -->
+      <div class="manager-control-panel">
+        <div class="search-box-wrapper">
+          <input type="text" class="search-input" id="vocab-search-input" placeholder="ค้นหาคำศัพท์ภาษาอังกฤษ หรือคำแปลภาษาไทย...">
+          <svg class="search-icon-svg" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.3-4.3"/></svg>
+        </div>
+
+        <div class="action-buttons-group">
+          <button class="btn-primary-action" id="btn-add-vocab-modal">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+            เพิ่มคำศัพท์ใหม่
+          </button>
+          <button class="btn-secondary-action" id="btn-bulk-import-modal">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+            นำเข้าข้อมูลกลุ่ม (Bulk)
+          </button>
+          <button class="btn-secondary-action" id="btn-export-json" title="ดาวน์โหลดแบ็กอัปคำศัพท์ทั้งหมด">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+            ส่งออกไฟล์ข้อมูล
+          </button>
+          <button class="btn-secondary-action" id="btn-ai-generate-sentences" style="background: rgba(157, 78, 221, 0.15); border-color: rgba(157, 78, 221, 0.3);" title="สร้างประโยคตัวอย่างสำหรับคำศัพท์ที่ยังไม่มีด้วย AI">
+            <span id="ai-btn-text">✨ AI เจนประโยค</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- AI Progress Bar -->
+      <div id="ai-progress-container" style="display:none; background: var(--bg-card); border: 1px solid var(--border-color); padding: 16px 20px; border-radius: var(--radius-md); margin-bottom: 20px; flex-direction: column; gap: 8px;">
+        <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:600;">
+          <span style="color: var(--primary);" id="ai-progress-status">กำลังประมวลผลคำศัพท์...</span>
+          <span id="ai-progress-pct">0%</span>
+        </div>
+        <div class="cat-progress" style="height:8px;"><div class="cat-progress-fill" id="ai-progress-fill" style="width:0%; background:linear-gradient(90deg, var(--primary), var(--success));"></div></div>
+      </div>
+
+      <!-- Dropdown Category Filter -->
+      <div style="margin-bottom: 20px; display: flex; align-items: center; gap: 12px; background: var(--bg-card); border: 1px solid var(--border-color); padding: 12px 18px; border-radius: var(--radius-sm); width: fit-content; max-width: 100%;">
+        <label for="vocab-category-filter" style="font-weight: 600; font-size: 14px; color: var(--text-main); white-space: nowrap;">📂 เลือกกรองตามหมวดหมู่:</label>
+        <select id="vocab-category-filter" class="form-input-text" style="width: auto; min-width: 220px; padding: 8px 16px; background: #141625; border: 1px solid var(--border-color); color: var(--text-main); border-radius: var(--radius-sm); outline: none; cursor: pointer; font-size: 13px; font-weight: 500; flex-grow: 1;">
+          <!-- Options rendered dynamically -->
+        </select>
+      </div>
+
+      <!-- Vocab Table Grid Container -->
+      <div class="table-container-glass">
+        <div class="vocab-grid-header">
+          <div>คำศัพท์ภาษาอังกฤษ</div>
+          <div>คำแปลภาษาไทย</div>
+          <div>หมวดหมู่</div>
+          <div>ประโยคตัวอย่างบริบท</div>
+          <div style="text-align: right;">จัดการ</div>
+        </div>
+        <div class="vocab-list-items" id="vocab-list-table-items">
+          <!-- Table rows rendered dynamically -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== ANALYTICS VIEW ==================== -->
+    <section class="view-section" id="analytics-view">
+      <div class="dashboard-title" style="margin-bottom: 30px;">
+        <h2>รายงานความคืบหน้าการท่องจำคำศัพท์</h2>
+        <p>วิเคราะห์เปอร์เซ็นต์คำศัพท์ที่คุณท่องจำได้ระดับเชี่ยวชาญ (กล่อง 5) และการกระจายตัวของคลังศัพท์ตามระดับความจำ</p>
+      </div>
+
+      <div class="analytics-grid-row">
+        <!-- Circular Chart Box -->
+        <div class="progress-overall-chart">
+          <h3>ระดับความเชี่ยวชาญคำศัพท์</h3>
+          <div class="circular-chart-box">
+            <svg class="circular-svg" viewBox="0 0 36 36">
+              <defs>
+                <linearGradient id="srsGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="var(--primary)" />
+                  <stop offset="100%" stop-color="var(--success)" />
+                </linearGradient>
+              </defs>
+              <path class="circular-bg-ring" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+              <path class="circular-fill-ring" id="analytics-progress-ring" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+            </svg>
+            <div class="chart-center-info">
+              <span class="chart-pct" id="analytics-mastered-pct-text">0%</span>
+              <span class="chart-lbl">คำศัพท์กล่องที่ 5</span>
+            </div>
+          </div>
+          <div style="text-align: center; font-size: 14px; color: var(--text-muted);" id="analytics-mastered-details">
+            เชี่ยวชาญแล้ว 0 จากทั้งหมด 0 คำ
+          </div>
+        </div>
+
+        <!-- Box stats list details -->
+        <div class="srs-box-tracker-container">
+          <h3>สรุปข้อมูลกล่องความคืบหน้า (Leitner Boxes)</h3>
+          <div class="srs-boxes-list">
+            <!-- Box 1 -->
+            <div class="srs-box-row" style="flex-direction:column; align-items: stretch; gap: 8px;">
+              <div style="display:flex; justify-content: space-between; align-items:center;">
+                <div class="srs-box-title">
+                  <div class="srs-box-dot box-1-dot"></div>
+                  <span>Box 1: เพิ่งเริ่มเรียน / ตอบผิด</span>
+                </div>
+                <span class="srs-box-count" id="analytics-box-1-count">0</span>
+              </div>
+              <div class="cat-progress"><div class="cat-progress-fill" id="analytics-box-1-bar" style="background: var(--danger);"></div></div>
+              <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--text-muted);">
+                <span>ต้องทบทวนซ้ำทันทีในรอบถัดไป</span>
+                <span id="analytics-box-1-pct">0%</span>
+              </div>
+            </div>
+
+            <!-- Box 2 -->
+            <div class="srs-box-row" style="flex-direction:column; align-items: stretch; gap: 8px;">
+              <div style="display:flex; justify-content: space-between; align-items:center;">
+                <div class="srs-box-title">
+                  <div class="srs-box-dot box-2-dot"></div>
+                  <span>Box 2: เริ่มจดจำได้เล็กน้อย</span>
+                </div>
+                <span class="srs-box-count" id="analytics-box-2-count">0</span>
+              </div>
+              <div class="cat-progress"><div class="cat-progress-fill" id="analytics-box-2-bar" style="background: #ffbe0b;"></div></div>
+              <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--text-muted);">
+                <span>ทวนความรู้ทุก 30 วินาที</span>
+                <span id="analytics-box-2-pct">0%</span>
+              </div>
+            </div>
+
+            <!-- Box 3 -->
+            <div class="srs-box-row" style="flex-direction:column; align-items: stretch; gap: 8px;">
+              <div style="display:flex; justify-content: space-between; align-items:center;">
+                <div class="srs-box-title">
+                  <div class="srs-box-dot box-3-dot"></div>
+                  <span>Box 3: ความจำระยะปานกลาง</span>
+                </div>
+                <span class="srs-box-count" id="analytics-box-3-count">0</span>
+              </div>
+              <div class="cat-progress"><div class="cat-progress-fill" id="analytics-box-3-bar" style="background: var(--secondary);"></div></div>
+              <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--text-muted);">
+                <span>ทวนความรู้ทุก 2 นาที</span>
+                <span id="analytics-box-3-pct">0%</span>
+              </div>
+            </div>
+
+            <!-- Box 4 -->
+            <div class="srs-box-row" style="flex-direction:column; align-items: stretch; gap: 8px;">
+              <div style="display:flex; justify-content: space-between; align-items:center;">
+                <div class="srs-box-title">
+                  <div class="srs-box-dot box-4-dot"></div>
+                  <span>Box 4: ความจำเริ่มเป็นระยะยาว</span>
+                </div>
+                <span class="srs-box-count" id="analytics-box-4-count">0</span>
+              </div>
+              <div class="cat-progress"><div class="cat-progress-fill" id="analytics-box-4-bar" style="background: #4361ee;"></div></div>
+              <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--text-muted);">
+                <span>ทวนความรู้ทุก 10 นาที</span>
+                <span id="analytics-box-4-pct">0%</span>
+              </div>
+            </div>
+
+            <!-- Box 5 -->
+            <div class="srs-box-row" style="flex-direction:column; align-items: stretch; gap: 8px;">
+              <div style="display:flex; justify-content: space-between; align-items:center;">
+                <div class="srs-box-title">
+                  <div class="srs-box-dot box-5-dot"></div>
+                  <span>Box 5: จำได้ถาวร / เชี่ยวชาญ</span>
+                </div>
+                <span class="srs-box-count" id="analytics-box-5-count">0</span>
+              </div>
+              <div class="cat-progress"><div class="cat-progress-fill" id="analytics-box-5-bar" style="background: var(--success);"></div></div>
+              <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--text-muted);">
+                <span>คำศัพท์จำฝังแน่น ทวนทุก 30 นาที</span>
+                <span id="analytics-box-5-pct">0%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div style="background: var(--bg-card); border: 1px solid var(--border-color); padding:20px; border-radius:var(--radius-md); font-size:14px; color:var(--text-muted); line-height:1.6;">
+        <span style="font-weight:700; color:var(--primary);">💡 เกร็ดน่ารู้:</span> การใช้งานระบบ Spaced Repetition (SRS) แบบทวนความรู้เป็นระยะๆ ห่างขึ้นเรื่อยๆ จะช่วยร่นระยะเวลาท่องคำศัพท์และเพิ่มพูนความจำระยะยาวได้ดีขึ้นกว่า 300% เมื่อเทียบกับการนั่งท่องจำแบบอัดรวดเดียวเป็นจำนวนมากๆ
+      </div>
+    </section>
+
+    <!-- ==================== SETTINGS VIEW ==================== -->
+    <section class="view-section" id="settings-view">
+      <div class="dashboard-title" style="margin-bottom: 24px;">
+        <h2>ตั้งค่าแอปพลิเคชัน</h2>
+        <p>กำหนดการควบคุมทางเทคนิค เสียง ระบบ และการจัดการรีเซ็ตข้อมูลเกม</p>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:20px; max-width:600px;">
+        <div style="background:var(--bg-card); border:1px solid var(--border-color); padding:24px; border-radius:var(--radius-md); display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <h4 style="font-size:16px; margin-bottom:4px;">ระบบเสียงเอฟเฟกต์ (Sound Effects)</h4>
+            <p style="color:var(--text-muted); font-size:12px;">เปิดใช้งานคีย์โน้ตสังเคราะห์เมื่อตอบคำถาม ถูก/ผิด หรือคลิกเลือกปุ่ม</p>
+          </div>
+          <label style="position:relative; display:inline-block; width:52px; height:28px;">
+            <input type="checkbox" id="toggle-settings-sound" style="opacity:0; width:0; height:0;">
+            <span style="position:absolute; cursor:pointer; inset:0; background-color:#333; border-radius:34px; transition:0.3s; box-shadow:inset 0 0 5px rgba(0,0,0,0.5);"></span>
+          </label>
+        </div>
+
+        <div style="background:var(--bg-card); border:1px solid var(--border-color); padding:24px; border-radius:var(--radius-md); display:flex; flex-direction:column; gap:14px;">
+          <div>
+            <h4 style="font-size:16px; margin-bottom:4px;">ตั้งค่า Google Gemini API Key</h4>
+            <p style="color:var(--text-muted); font-size:12px;">ใส่ API Key ของคุณเพื่อใช้ฟีเจอร์ช่วยสร้างตัวอย่างประโยคและคำอ่านอัตโนมัติด้วย AI (<a href="https://aistudio.google.com/" target="_blank" style="color:var(--primary); text-decoration: underline;">ขอรับ API Key ฟรีที่นี่</a>)</p>
+          </div>
+          <div style="display:flex; gap:12px; align-items:center; width:100%;">
+            <input type="password" id="settings-gemini-key" class="form-input-text" placeholder="AIzaSy..." style="flex-grow:1;">
+            <button class="btn-primary-action" id="btn-save-api-key" style="white-space:nowrap; padding: 12px 20px;">บันทึกคีย์</button>
+          </div>
+        </div>
+
+        <div style="background:var(--bg-card); border:1px solid var(--border-color); padding:24px; border-radius:var(--radius-md); display:flex; flex-direction:column; gap:14px;">
+          <div>
+            <h4 style="font-size:16px; margin-bottom:4px; color:var(--danger);">รีเซ็ตข้อมูลระบบ (Danger Zone)</h4>
+            <p style="color:var(--text-muted); font-size:12px;">การล้างประวัติความจำ สถิติคะแนน และคำศัพท์ที่คุณป้อนเข้าไปใหม่ทั้งหมด ข้อมูลจะกลับสู่ค่าเริ่มต้นจากระบบ</p>
+          </div>
+          <button class="btn-primary-action" id="btn-reset-vocab-settings" style="background:var(--danger); width:fit-content;">
+            ล้างความคืบหน้าทั้งหมด
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ==================== MODALS SYSTEM ==================== -->
+  
+  <!-- Add/Edit Single Word Modal -->
+  <div class="modal-overlay" id="add-word-modal">
+    <div class="modal-content-card">
+      <div class="modal-header-bar">
+        <h3 id="modal-form-title">เพิ่มคำศัพท์ใหม่</h3>
+        <button class="modal-close-trigger" id="vocab-modal-close">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row-grid">
+          <div class="form-group-item">
+            <label for="vocab-word-input">คำศัพท์ภาษาอังกฤษ (English) *</label>
+            <input type="text" id="vocab-word-input" class="form-input-text" placeholder="เช่น elephant" required>
+          </div>
+          <div class="form-group-item">
+            <label for="vocab-translation-input">คำแปลภาษาไทย (Thai) *</label>
+            <input type="text" id="vocab-translation-input" class="form-input-text" placeholder="เช่น ช้าง" required>
+          </div>
+        </div>
+
+        <div class="form-row-grid">
+          <div class="form-group-item">
+            <label for="vocab-category-input">หมวดหมู่ (Category)</label>
+            <input type="text" id="vocab-category-input" class="form-input-text" placeholder="เช่น Animals (สัตว์)" value="General (ทั่วไป)">
+          </div>
+          <div class="form-group-item">
+            <label for="vocab-ipa-input">คำอ่านสากล (IPA Phonetic)</label>
+            <input type="text" id="vocab-ipa-input" class="form-input-text" placeholder="เช่น /ˈel.ɪ.fənt/">
+          </div>
+        </div>
+
+        <div class="form-group-item">
+          <label for="vocab-sentence-input">ตัวอย่างประโยคบริบทภาษาอังกฤษ (Sentence)</label>
+          <textarea id="vocab-sentence-input" class="form-input-text form-textarea" placeholder="เช่น An elephant is the largest land mammal."></textarea>
+        </div>
+
+        <div class="form-group-item">
+          <label for="vocab-sentence-translation-input">คำแปลของประโยคตัวอย่างภาษาไทย</label>
+          <textarea id="vocab-sentence-translation-input" class="form-input-text form-textarea" placeholder="เช่น ช้างเป็นสัตว์เลี้ยงลูกด้วยนมบนบกที่ใหญ่ที่สุด"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer-bar">
+        <button class="btn-secondary-action" id="btn-cancel-vocab">ยกเลิก</button>
+        <button class="btn-primary-action" id="btn-save-vocab">บันทึกข้อมูล</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bulk Copy-Paste CSV/JSON Import Modal -->
+  <div class="modal-overlay" id="bulk-import-modal">
+    <div class="modal-content-card" style="max-width:650px;">
+      <div class="modal-header-bar">
+        <h3>นำเข้าคำศัพท์แบบกลุ่ม (Bulk CSV / JSON)</h3>
+        <button class="modal-close-trigger" id="import-modal-close">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 13px; color: var(--text-muted); line-height: 1.5;">
+          คุณสามารถคัดลอก (Copy) ข้อมูลคำศัพท์ภาษาอังกฤษของคุณจำนวนมากจาก Excel/Google Sheets มาวางเพื่อเพิ่มคำศัพท์ลงในเกมได้รวดเดียว
+        </p>
+
+        <div class="form-group-item">
+          <label for="csv-paste-area">คัดลอกและวางข้อมูล CSV หรือ JSON ของคุณด้านล่าง:</label>
+          <textarea id="csv-paste-area" class="form-input-text form-textarea" style="min-height: 150px; font-family: monospace; font-size:12px;" placeholder="คำศัพท์,คำแปล,หมวดหมู่,คำอ่านสากล,ประโยคตัวอย่าง,คำแปลประโยคตัวอย่าง"></textarea>
+        </div>
+
+        <div class="import-instructions">
+          <b>💡 รูปแบบคอลัมน์ใน Excel/Google Sheets (คั่นด้วย Tab หรือเครื่องหมายจุลภาค):</b><br>
+          คอลัมน์ 1: คำศัพท์ภาษาอังกฤษ (เช่น apple)<br>
+          คอลัมน์ 2: คำแปลภาษาไทย (เช่น แอปเปิ้ล)<br>
+          คอลัมน์ 3: หมวดหมู่ (เช่น Food & Drinks (อาหารและเครื่องดื่ม)) *ถ้าเว้นจะใส่เป็น Imported*<br>
+          คอลัมน์ 4: คำอ่านสากล IPA (เช่น /ˈæp.əl/) *ไม่มีเว้นได้*<br>
+          คอลัมน์ 5: ประโยคภาษาอังกฤษ (เช่น An apple a day keeps the doctor away.) *ไม่มีเว้นได้*<br>
+          คอลัมน์ 6: แปลประโยคภาษาไทย (เช่น กินแอปเปิ้ลวันละผลจะสุขภาพดี) *ไม่มีเว้นได้*
+        </div>
+      </div>
+      <div class="modal-footer-bar">
+        <button class="btn-secondary-action" id="btn-cancel-import">ยกเลิก</button>
+        <button class="btn-primary-action" id="btn-confirm-import">นำเข้าข้อมูลทันที</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast popup messages notification -->
+  <div class="toast-popup-msg" id="toast-popup">
+    <div style="background:var(--primary); width:8px; align-self:stretch; border-radius:4px 0 0 4px; display:none;"></div>
+    <div class="toast-text" id="toast-text">สำเร็จเสร็จสิ้น!</div>
+  </div>
+
+  <!-- Add CSS custom inline for settings checkbox slider behavior -->
+  <style>
+    #toggle-settings-sound:checked + span {
+      background-color: var(--success);
+      box-shadow: 0 0 10px var(--success-glow);
+    }
+    #toggle-settings-sound:checked + span::before {
+      transform: translateX(24px);
+    }
+    #toggle-settings-sound + span::before {
+      content: "";
+      position: absolute;
+      height: 20px;
+      width: 20px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      border-radius: 50%;
+      transition: 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+  </style>
+
+  <!-- Load Scripts -->
+  <script src="vocab_data.js"></script>
+  <script src="app.js"></script>
+
+</body>
+</html>
